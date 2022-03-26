@@ -1,0 +1,27 @@
+{
+  "name": "messenger-webhook",
+  "version": "1.0.0",
+  "description": "A bot that interacts with a user via messenger",
+  "main": "server.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AntenehAdmasu/Facebook-Webhook.git"
+  },
+  "author": "Anteneh Admasu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AntenehAdmasu/Facebook-Webhook/issues"
+  },
+  "homepage": "https://github.com/AntenehAdmasu/Facebook-Webhook#readme",
+  "dependencies": {
+    "body-parser": "^1.19.2",
+    "express": "^4.17.3",
+    "mongoose": "^6.2.8",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "request": "^2.88.2"
+  }
+}
