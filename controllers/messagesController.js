@@ -13,37 +13,39 @@ exports.handleMessage = async (senderPsid, receivedEvent) => {
         message: messageType == "TEXT" ? receivedEvent.message.text : receivedEvent.postback.payload,
         messageType: messageType
     }
-    let response = await saveMessageAndGetResponse(receivedEvent, senderPsid, message);
+    let responses = await saveMessageAndGetResponse(receivedEvent, senderPsid, message);
 
     // Send response to the sender
-    callSendAPI(senderPsid, response);
+    for (let response in responses) {
+        callSendAPI(senderPsid, response);
+    }
 }
 
 async function saveMessageAndGetResponse(receivedMessage, senderPsid, message) {
 
     const savedMessage = await Message.create(message);
     const user = await User.findOne({ userId: senderPsid });
-    let response;
+    let response = [];
 
     if (!user) {
         await User.create({ userId: senderPsid, interactionStage: "GREET_AND_NAME" });
         await User.updateOne({ userId: senderPsid }, { $push: { messages: savedMessage._id } });
         // Greet the user and ask first name
-        response = {
+        response.push({
             "text": responses.GREET_AND_ASK_NAME
-        };
+        });
     } else if (user.interactionStage == "GREET_AND_NAME") {
         const name = receivedMessage.message.text;
         await User.updateOne({ userId: senderPsid }, { $push: { messages: savedMessage._id }, $set: { interactionStage: "BIRTH_DATE_ASKED", name: name } });
         // ASK THE BIRTH DATE OF THE USER
-        response = {
+        response.push({
             "text": responses.ASK_BIRTH_DATE
-        };
+        });
     } else if (user.interactionStage == "BIRTH_DATE_ASKED") {
         const birthDate = receivedMessage.message.text;
         await User.updateOne({ userId: senderPsid }, { $push: { messages: savedMessage._id }, $set: { interactionStage: "BIRTH_DATE_RECEIVED", birthDate: birthDate } });
         // ASK IF THE USER WANTS TO KNOW HOW MANY DAYS REMAIN BEFORE THE NEXT BIRTHDAY (with a postback)
-        response = {
+        response.push({
             "attachment": {
                 "type": "template",
                 "payload": {
@@ -63,27 +65,41 @@ async function saveMessageAndGetResponse(receivedMessage, senderPsid, message) {
                     ]
                 }
             }
-        };
+        });
     } else if (user.interactionStage == "BIRTH_DATE_RECEIVED") {
         // Send good bye or calculate the number of remaining days
         if (receivedMessage.postback.payload == "YES") {
             const remainingDays = calculateRemainingDays(user.birthDate);
-            response = {
+            response.push({
                 "text": remainingDays + responses.TELL_REMAINING_DAYS
-            };
-
+            });
+            if (remainingDays <= 30) {
+                response.push({
+                    'attachment': {
+                        'type': 'template',
+                        'payload': {
+                            'template_type': 'generic',
+                            'elements': [{
+                                'title': 'Your birthday is with in 30 days.',
+                                'subtitle': 'Happy birthday',
+                                'image_url': responses.BIRTHDAY_CAKE_IMAGE_URL
+                            }]
+                        }
+                    }
+                });
+            }
         } else {
-            response = {
+            response.push({
                 "text": responses.GOOD_BYE + user.name
-            };
+            });
         }
         await User.updateOne({ userId: senderPsid }, { $push: { messages: savedMessage._id }, $set: { interactionStage: "ENDED" } });
     } else if (user.interactionStage == "ENDED") {
         await User.updateOne({ userId: senderPsid }, { $push: { messages: savedMessage._id }, $set: { interactionStage: "GREET_AND_NAME" } });
         // Greet the user and ask first name
-        response = {
+        response.push({
             "text": responses.GREET_AND_ASK_NAME
-        };
+        });
     }
     return response;
 
