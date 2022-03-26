@@ -1,10 +1,6 @@
-const { Log } = require('../models/Log');
 const handleMessage = require('./messagesController').handleMessage;
 
 exports.verifyToken = async (req, res) => {
-    // Log every request to database
-    const saveReq = new Log({ requestType: "get", requestBody: JSON.stringify(req.body) });
-    await saveReq.save();
 
     const VERIFY_TOKEN = process.env.VERIFY_TOKEN;
 

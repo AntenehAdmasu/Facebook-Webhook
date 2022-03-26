@@ -108,7 +108,7 @@ async function saveMessageAndGetResponse(receivedMessage, senderPsid, message) {
 // Sends response messages
 function callSendAPI(senderPsid, response) {
 
-    // The page access token we have generated in your app settings
+    // The page access token generated in facebook app settings
     const PAGE_ACCESS_TOKEN = process.env.PAGE_ACCESS_TOKEN;
 
     // Construct the message body
@@ -119,7 +119,7 @@ function callSendAPI(senderPsid, response) {
         'message': response
     };
 
-    // Send the HTTP request to the Messenger Platform
+    // Send HTTPS request to messenger
     request({
         'uri': `https://graph.facebook.com/v2.6/${process.env.PAGE_ID}/messages`,
         'qs': { 'access_token': PAGE_ACCESS_TOKEN },
