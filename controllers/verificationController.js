@@ -11,7 +11,7 @@ exports.verifyToken = async (req, res) => {
     // Checks if a token and mode exist in the query string
     if (hubMode && token) {
 
-        if (mode === 'subscribe' && token === VERIFY_TOKEN) {
+        if (hubMode === 'subscribe' && token === VERIFY_TOKEN) {
             // Respond with challenge sent
             return res.status(200).send(hubChallenge);
         } else {

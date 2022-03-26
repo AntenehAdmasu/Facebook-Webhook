@@ -8,7 +8,7 @@ const verificationRoutes = require('./routes/verificationRoutes');
 const userDataRoutes = require('./routes/userDataRoutes');
 // Database connection
 mongoose.connect(process.env.APP_DB_CONNECTION, { useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false })
-    .then(() => console.log('connected to mongodb'))
+    .then(() => console.log('Connected to MongoDB'))
 
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
