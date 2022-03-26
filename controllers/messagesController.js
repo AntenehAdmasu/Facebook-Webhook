@@ -16,7 +16,7 @@ exports.handleMessage = async (senderPsid, receivedEvent) => {
     let responses = await saveMessageAndGetResponse(receivedEvent, senderPsid, message);
 
     // Send response to the sender
-    for (let response in responses) {
+    for (let response of responses) {
         callSendAPI(senderPsid, response);
     }
 }
