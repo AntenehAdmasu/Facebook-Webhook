@@ -1,8 +1,8 @@
-const request = require('request');
+const request = require("request");
 
-const { User } = require('../models/User');
-const { Message } = require('../models/Message');
-const responses = require('../utils/constants');
+const { User } = require("../models/User");
+const { Message } = require("../models/Message");
+const responses = require("../utils/constants");
 
 exports.handleMessage = async (senderPsid, receivedEvent) => {
     let messageType = receivedEvent.message ? "TEXT" : "POSTBACK";
@@ -75,14 +75,14 @@ async function saveMessageAndGetResponse(receivedMessage, senderPsid, message) {
             });
             if (remainingDays <= 30) {
                 response.push({
-                    'attachment': {
-                        'type': 'template',
-                        'payload': {
-                            'template_type': 'generic',
-                            'elements': [{
-                                'title': 'Your birthday is with in 30 days.',
-                                'subtitle': 'Happy birthday',
-                                'image_url': responses.BIRTHDAY_CAKE_IMAGE_URL
+                    "attachment": {
+                        "type": "template",
+                        "payload": {
+                            "template_type": "generic",
+                            "elements": [{
+                                "title": "Your birthday is with in 30 days.",
+                                "subtitle": "Happy birthday",
+                                "image_url": responses.BIRTHDAY_CAKE_IMAGE_URL
                             }]
                         }
                     }
@@ -113,23 +113,23 @@ function callSendAPI(senderPsid, response) {
 
     // Construct the message body
     let requestBody = {
-        'recipient': {
-            'id': senderPsid
+        "recipient": {
+            "id": senderPsid
         },
-        'message': response
+        "message": response
     };
 
     // Send HTTPS request to messenger
     request({
-        'uri': `https://graph.facebook.com/v2.6/${process.env.PAGE_ID}/messages`,
-        'qs': { 'access_token': PAGE_ACCESS_TOKEN },
-        'method': 'POST',
-        'json': requestBody
+        "uri": `https://graph.facebook.com/v2.6/${process.env.PAGE_ID}/messages`,
+        "qs": { "access_token": PAGE_ACCESS_TOKEN },
+        "method": "POST",
+        "json": requestBody
     }, (err, _res, _body) => {
         if (!err) {
-            console.log('Message sent!');
+            console.log("Message sent!");
         } else {
-            console.error('Unable to send message:' + err);
+            console.error("Unable to send message:" + err);
         }
     });
 }
